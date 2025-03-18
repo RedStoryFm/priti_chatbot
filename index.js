@@ -6,8 +6,6 @@ const app = express();
 app.use(express.json());
 
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
-console.log(VERIFY_TOKEN);
-
 const INSTAGRAM_ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -22,17 +20,17 @@ async function getChatbotResponse(message) {
     return response.data.choices[0].message.content;
 }
 
-// Webhook verification (Step 5)
-app.get("/webhook", (req, res) => {
+// Webhook verification (for Meta)
+app.get("/api/webhook", (req, res) => {
     if (req.query["hub.verify_token"] === VERIFY_TOKEN) {
         res.send(req.query["hub.challenge"]);
     } else {
-        res.send("Verification failed.");
+        res.status(403).send("Verification failed.");
     }
 });
 
 // Handle Instagram messages
-app.post("/webhook", async (req, res) => {
+app.post("/api/webhook", async (req, res) => {
     let body = req.body;
 
     if (body.object === "instagram") {
@@ -61,4 +59,5 @@ async function sendInstagramMessage(recipientId, message) {
     });
 }
 
-app.listen(3000, () => console.log("Chatbot running on port 3000"));
+// Export the app for Vercel (Important!)
+module.exports = app;
