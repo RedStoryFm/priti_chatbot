@@ -1,5 +1,5 @@
 {
   "version": 2,
-  "builds": [{ "src": "index.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "index.js" }]
+  "builds": [{ "src": "pages/api/webhook.js", "use": "@vercel/node" }],
+  "routes": [{ "src": "/api/webhook", "dest": "/pages/api/webhook.js" }]
 }
