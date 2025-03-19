@@ -2,18 +2,18 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const axios = require("axios");
-
+const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
+// ✅ Serve static files from the 'public' folder
+app.use(express.static(path.join(__dirname, "../public")));
 
-app.use(express.static("public"));
-
+// ✅ Route for Privacy Policy Page
 app.get("/privacy", (req, res) => {
-    res.sendFile(__dirname + "/public/privacy.html");
+  res.sendFile(path.join(__dirname, "../public", "privacy.html"));
 });
-
 
 // Instagram Webhook Verification
 app.get("/webhook", (req, res) => {
