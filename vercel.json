@@ -13,7 +13,7 @@
     },
     {
       "src": "/privacy",
-      "dest": "/privacy.html"
+      "dest": "/public/privacy.html"
     }
   ]
 }
