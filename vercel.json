@@ -9,11 +9,14 @@
   "routes": [
     {
       "src": "/api/webhook",
-      "dest": "/pages/api/webhook.js"
+      "dest": "/api/webhook.js"
     },
     {
       "src": "/privacy",
-      "dest": "/privacy.html"
+      "dest": "/public/privacy.html"
     }
-  ]
+  ],
+  "static": {
+    "public": "public"
+  }
 }
