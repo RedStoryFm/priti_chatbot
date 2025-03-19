@@ -1,5 +1,23 @@
 {
   "version": 2,
-  "builds": [{ "src": "pages/api/webhook.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/api/webhook", "dest": "/pages/api/webhook.js" }]
+  "builds": [
+    {
+      "src": "pages/api/webhook.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/webhook",
+      "dest": "/pages/api/webhook.js"
+    },
+    {
+      "routes": [
+        {
+          "src": "/privacy",
+          "dest": "/privacy.html"
+        }
+      ]
+    }
+  ]
 }
