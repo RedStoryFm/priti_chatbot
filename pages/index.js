@@ -8,6 +8,13 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+app.use(express.static("public"));
+
+app.get("/privacy", (req, res) => {
+    res.sendFile(__dirname + "/public/privacy.html");
+});
+
+
 // Instagram Webhook Verification
 app.get("/webhook", (req, res) => {
     const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
