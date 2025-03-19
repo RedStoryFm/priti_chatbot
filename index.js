@@ -59,5 +59,14 @@ async function sendInstagramMessage(recipientId, message) {
     });
 }
 
+app.get("/auth/callback", (req, res) => {
+    const code = req.query.code;
+    if (!code) {
+        return res.status(400).send("Authorization failed.");
+    }
+
+    res.send("Instagram Login Successful! You can close this window.");
+});
+
 // Export the app for Vercel (Important!)
 module.exports = app;
