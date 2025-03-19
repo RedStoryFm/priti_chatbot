@@ -1,73 +1,85 @@
-const express = require("express");
-const axios = require("axios");
 require("dotenv").config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const axios = require("axios");
 
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
-const INSTAGRAM_ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+app.use(bodyParser.json());
 
-// OpenAI API for chatbot response
-async function getChatbotResponse(message) {
-    const response = await axios.post("https://api.openai.com/v1/chat/completions", {
-        model: "gpt-4",
-        messages: [{ role: "user", content: message }],
-    }, {
-        headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
-        timeout: 5000 // Increase timeout to 5s
-    });
-    return response.data.choices[0].message.content;
-}
+// Instagram Webhook Verification
+app.get("/webhook", (req, res) => {
+    const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
+    const mode = req.query["hub.mode"];
+    const token = req.query["hub.verify_token"];
+    const challenge = req.query["hub.challenge"];
 
-// Webhook verification (for Meta)
-app.get("/api/webhook", (req, res) => {
-    if (req.query["hub.verify_token"] === VERIFY_TOKEN) {
-        res.send(req.query["hub.challenge"]);
+    if (mode && token === VERIFY_TOKEN) {
+        console.log("WEBHOOK VERIFIED ✅");
+        res.status(200).send(challenge);
     } else {
-        res.status(403).send("Verification failed.");
+        res.sendStatus(403);
     }
 });
 
-// Handle Instagram messages
-app.post("/api/webhook", async (req, res) => {
-    let body = req.body;
+// Handle Instagram Messages
+app.post("/webhook", (req, res) => {
+    const body = req.body;
 
     if (body.object === "instagram") {
-        body.entry.forEach(async (entry) => {
-            let messaging = entry.messaging[0];
-            let senderId = messaging.sender.id;
-            let userMessage = messaging.message.text;
+        body.entry.forEach((entry) => {
+            const message = entry.messaging[0].message.text;
+            const senderId = entry.messaging[0].sender.id;
 
-            let botReply = await getChatbotResponse(userMessage);
-            await sendInstagramMessage(senderId, botReply);
+            // Get predefined response
+            const replyText = getPredefinedResponse(message);
+
+            // Send the response
+            sendInstagramMessage(senderId, replyText);
         });
 
-        res.sendStatus(200);
+        res.status(200).send("EVENT_RECEIVED");
     } else {
         res.sendStatus(404);
     }
 });
 
-// Send message to Instagram
-async function sendInstagramMessage(recipientId, message) {
-    await axios.post(`https://graph.facebook.com/v18.0/me/messages`, {
-        recipient: { id: recipientId },
-        message: { text: message }
+// Function to return predefined responses
+function getPredefinedResponse(message) {
+    message = message.toLowerCase();
+
+    if (message.includes("hello")) {
+        return "Hi there! How can I help you? 😊";
+    } else if (message.includes("price")) {
+        return "Our product pricing starts at $49.99. Let me know if you need details!";
+    } else if (message.includes("support")) {
+        return "You can reach our support team at support@example.com.";
+    } else {
+        return "I'm sorry, I didn't understand that. Can you rephrase?";
+    }
+}
+
+// Function to send messages to Instagram
+function sendInstagramMessage(senderId, message) {
+    const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
+
+    axios.post(`https://graph.facebook.com/v18.0/me/messages`, {
+        recipient: { id: senderId },
+        message: { text: message },
     }, {
-        params: { access_token: INSTAGRAM_ACCESS_TOKEN }
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+        },
+    }).then(response => {
+        console.log("Message sent:", response.data);
+    }).catch(error => {
+        console.error("Error sending message:", error.response ? error.response.data : error.message);
     });
 }
 
-app.get("/auth/callback", (req, res) => {
-    const code = req.query.code;
-    if (!code) {
-        return res.status(400).send("Authorization failed.");
-    }
-
-    res.send("Instagram Login Successful! You can close this window.");
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
-
-// Export the app for Vercel (Important!)
-module.exports = app;
