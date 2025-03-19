@@ -12,12 +12,8 @@
       "dest": "/pages/api/webhook.js"
     },
     {
-      "routes": [
-        {
-          "src": "/privacy",
-          "dest": "/privacy.html"
-        }
-      ]
+      "src": "/privacy",
+      "dest": "/privacy.html"
     }
   ]
 }
