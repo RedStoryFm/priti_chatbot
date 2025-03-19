@@ -15,7 +15,8 @@ async function getChatbotResponse(message) {
         model: "gpt-4",
         messages: [{ role: "user", content: message }],
     }, {
-        headers: { Authorization: `Bearer ${OPENAI_API_KEY}` }
+        headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+        timeout: 5000 // Increase timeout to 5s
     });
     return response.data.choices[0].message.content;
 }
