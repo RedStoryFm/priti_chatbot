@@ -65,6 +65,7 @@ function sendMessage(senderId, message) {
     recipient: { id: senderId },
     message: { text: message },
   };
+  console.log("Leora ami run korchi bar!");
 
   fetch(url, {
     method: "POST",
@@ -72,7 +73,12 @@ function sendMessage(senderId, message) {
     body: JSON.stringify(response),
   })
     .then((res) => res.json())
-    .then((data) => console.log("✅ Message sent:", data))
+    .then((data) => {
+      console.log("✅ Message sent:", data);
+      if (data.error) {
+        console.error("❌ Instagram API Error:", data.error);
+      }
+    })
     .catch((err) => console.error("❌ Error sending message:", err));
 }
 
