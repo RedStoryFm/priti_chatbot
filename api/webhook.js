@@ -18,14 +18,17 @@ router.get("/", (req, res) => {
 
 // Webhook for handling messages
 router.post("/", async (req, res) => {
+  console.log("🔹 Webhook Received: ", JSON.stringify(req.body, null, 2)); // ✅ Log the entire body
   const body = req.body;
 
   if (body.object === "instagram") {
     for (const entry of body.entry) {
+      console.log("📩 Entry: ", entry);
       let message = entry.messaging?.[0]?.message?.text;
       let senderId = entry.messaging?.[0]?.sender?.id;
 
       if (message) {
+        console.log("💬 Received Message:", message);
         let botReply = getBotResponse(message);
 
         // ✅ Use dynamic import to load node-fetch
@@ -33,6 +36,7 @@ router.post("/", async (req, res) => {
 
         sendMessage(senderId, botReply, fetch);
       } else {
+        console.log("❌ No valid message found");
         res.sendStatus(404);
       }
     }
@@ -63,7 +67,8 @@ function sendMessage(senderId, message, fetch) {
 
 // Dummy function for bot response
 function getBotResponse(userMessage) {
-  return "Thanks for your message! 😊"; // Customize as needed
+  console.log("Bot Running : Thanks for your message! 😊" + userMessage);
+  return "Thanks for your message! 😊" + userMessage; // Customize as needed
 }
 
 module.exports = router;
