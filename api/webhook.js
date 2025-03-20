@@ -1,5 +1,4 @@
 const express = require("express");
-const fetch = require("node-fetch");
 const router = express.Router();
 
 // Webhook verification endpoint
@@ -18,72 +17,32 @@ router.get("/", (req, res) => {
 });
 
 // Webhook for handling messages
-router.post("/", (req, res) => {
+router.post("/", async (req, res) => {
   const body = req.body;
-  console.log("📩 Received Webhook Event:", JSON.stringify(body, null, 2));
 
   if (body.object === "instagram") {
-    body.entry?.forEach((entry) => {
-      if (!entry.messaging || entry.messaging.length === 0) {
-        console.warn("⚠️ No messaging event found in entry.");
-        return;
-      }
-
-      const messageEvent = entry.messaging[0];
-
-      if (!messageEvent.message || !messageEvent.sender) {
-        console.warn("⚠️ No valid message or sender in event.");
-        return;
-      }
-
-      const message = messageEvent.message.text;
-      const senderId = messageEvent.sender.id;
-
-      console.log(
-        `📨 Received message: "${message}" from sender ID: ${senderId}`
-      );
+    for (const entry of body.entry) {
+      let message = entry.messaging?.[0]?.message?.text;
+      let senderId = entry.messaging?.[0]?.sender?.id;
 
       if (message) {
         let botReply = getBotResponse(message);
-        console.log(`🤖 Sending reply to ${senderId}: ${botReply}`);
-        sendMessage(senderId, botReply);
-      }
-    });
 
+        // ✅ Use dynamic import to load node-fetch
+        const fetch = (await import("node-fetch")).default;
+
+        sendMessage(senderId, botReply, fetch);
+      } else {
+        res.sendStatus(404);
+      }
+    }
     res.status(200).send("EVENT_RECEIVED");
   } else {
-    console.warn("⚠️ Received unknown event type.");
     res.sendStatus(404);
   }
 });
 
-// Function to send a message
-/* function sendMessage(senderId, message) {
-  const PAGE_ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
-  const url = `https://graph.facebook.com/v12.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
-
-  const response = {
-    recipient: { id: senderId },
-    message: { text: message },
-  };
-  console.log("Leora ami run korchi bar!");
-
-  fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(response),
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log("✅ Message sent:", data);
-      if (data.error) {
-        console.error("❌ Instagram API Error:", data.error);
-      }
-    })
-    .catch((err) => console.error("❌ Error sending message:", err));
-} */
-
-function sendMessage(senderId, message) {
+function sendMessage(senderId, message, fetch) {
   const PAGE_ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
   const url = `https://graph.facebook.com/v12.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
 
@@ -98,18 +57,8 @@ function sendMessage(senderId, message) {
     body: JSON.stringify(response),
   })
     .then((res) => res.json())
-    .then((data) => {
-      console.log("📤 API Response:", JSON.stringify(data, null, 2));
-      if (data.error) {
-        console.error("❌ Instagram API Error:", data.error);
-      }
-    })
-    .catch((err) => console.error("❌ Error sending message:", err));
-}
-
-// Dummy function for bot response
-function getBotResponse(userMessage) {
-  return "Thanks for your message! 😊"; // Customize as needed
+    .then((data) => console.log("Message sent:", data))
+    .catch((err) => console.error("Error sending message:", err));
 }
 
 module.exports = router;
