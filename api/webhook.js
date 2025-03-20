@@ -62,6 +62,7 @@ async function sendMessage(recipientId, messageText) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(messageData),
+      agent: new (require("https").Agent)({ rejectUnauthorized: false }), // Allow self-signed certificates
     });
 
     const data = await response.json();
