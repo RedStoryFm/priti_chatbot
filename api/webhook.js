@@ -45,6 +45,7 @@ router.post("/", (req, res) => {
 
       if (message) {
         let botReply = getBotResponse(message);
+        console.log(`🤖 Sending reply to ${senderId}: ${botReply}`);
         sendMessage(senderId, botReply);
       }
     });
@@ -57,7 +58,7 @@ router.post("/", (req, res) => {
 });
 
 // Function to send a message
-function sendMessage(senderId, message) {
+/* function sendMessage(senderId, message) {
   const PAGE_ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
   const url = `https://graph.facebook.com/v12.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
 
@@ -75,6 +76,30 @@ function sendMessage(senderId, message) {
     .then((res) => res.json())
     .then((data) => {
       console.log("✅ Message sent:", data);
+      if (data.error) {
+        console.error("❌ Instagram API Error:", data.error);
+      }
+    })
+    .catch((err) => console.error("❌ Error sending message:", err));
+} */
+
+function sendMessage(senderId, message) {
+  const PAGE_ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
+  const url = `https://graph.facebook.com/v12.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+
+  const response = {
+    recipient: { id: senderId },
+    message: { text: message },
+  };
+
+  fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(response),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("📤 API Response:", JSON.stringify(data, null, 2));
       if (data.error) {
         console.error("❌ Instagram API Error:", data.error);
       }
