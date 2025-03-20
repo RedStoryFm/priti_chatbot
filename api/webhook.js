@@ -46,23 +46,43 @@ router.post("/", async (req, res) => {
   }
 });
 
-function sendMessage(senderId, message, fetch) {
+async function sendMessage(senderId, message, fetch) {
   const PAGE_ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
-  const url = `https://graph.facebook.com/v12.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+  //const url = `https://graph.facebook.com/v12.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
+  const url = `https://graph.facebook.com/v18.0/me/messages?access_token=${PAGE_ACCESS_TOKEN}`;
 
   const response = {
     recipient: { id: senderId },
     message: { text: message },
   };
 
-  fetch(url, {
+  console.log("📤 Sending Message to:", senderId);
+  console.log("📨 Message Content:", message);
+
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(response),
+    });
+
+    const data = await res.json();
+    console.log("✅ Message Sent Successfully:", data);
+
+    if (data.error) {
+      console.error("❌ Error Sending Message:", data.error);
+    }
+  } catch (err) {
+    console.error("❌ Fetch Error:", err);
+  }
+  /* fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(response),
   })
     .then((res) => res.json())
     .then((data) => console.log("Message sent:", data))
-    .catch((err) => console.error("Error sending message:", err));
+    .catch((err) => console.error("Error sending message:", err)); */
 }
 
 // Dummy function for bot response
