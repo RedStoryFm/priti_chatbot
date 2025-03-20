@@ -1,3 +1,6 @@
+// Load environment variables
+require("dotenv").config();
+
 // Express server for handling Instagram webhook and auto-replies
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -9,7 +12,7 @@ app.use(bodyParser.json());
 
 // Webhook verification endpoint
 app.get("/webhook", (req, res) => {
-    const VERIFY_TOKEN = "your_verify_token";
+    const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
     const mode = req.query["hub.mode"];
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
