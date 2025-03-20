@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "homepage": "https://github.com/RedStoryFm/priti_chatbot#readme",
+  "main": "index.js",
   "bugs": {
     "url": "https://github.com/RedStoryFm/priti_chatbot/issues"
   },
@@ -13,9 +14,8 @@
   "license": "ISC",
   "author": "",
   "type": "commonjs",
-  "main": "pages/index.js",
   "scripts": {
-    "start": "node pages/index.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
