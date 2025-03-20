@@ -1,22 +1,12 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "pages/api/webhook.js",
-      "use": "@vercel/node"
-    },{
+ {
       "src": "pages/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
-    {
-      "src": "/api/webhook",
-      "dest": "/pages/api/webhook.js"
-    },
-    {
-      "src": "/privacy",
-      "dest": "/public/privacy.html"
-    }
+    { "src": "/(.*)", "dest": "index.js" }
   ]
 }
