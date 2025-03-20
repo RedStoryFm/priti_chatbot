@@ -2,10 +2,15 @@
 require("dotenv").config();
 const express = require("express");
 const fetch = require("node-fetch");
+const https = require("https");
 
 const router = express.Router();
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 const ACCESS_TOKEN = process.env.IG_ACCESS_TOKEN;
+
+const agent = new https.Agent({
+  rejectUnauthorized: false, // Ignore self-signed certificates
+});
 
 // ✅ Webhook verification for Instagram
 router.get("/", (req, res) => {
@@ -62,7 +67,7 @@ async function sendMessage(recipientId, messageText) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(messageData),
-      agent: new (require("https").Agent)({ rejectUnauthorized: false }), // Allow self-signed certificates
+      agent: agent, // Allow self-signed certificates
     });
 
     const data = await response.json();
