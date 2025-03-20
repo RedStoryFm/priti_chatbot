@@ -4,6 +4,7 @@ require("dotenv").config();
 // Express server for handling Instagram webhook and auto-replies
 const express = require("express");
 const bodyParser = require("body-parser");
+const webhookRoutes = require("./api/webhook");
 const privacyRoutes = require("./routes/privacy");
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(bodyParser.json());
 
-// Webhook verification endpoint
+/* // Webhook verification endpoint
 app.get("/webhook", (req, res) => {
     const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
     const mode = req.query["hub.mode"];
@@ -41,19 +42,22 @@ app.post("/webhook", (req, res) => {
     } else {
         res.sendStatus(404);
     }
-});
+}); */
+
+// Use separate routes
+app.use("/webhook", webhookRoutes); // ✅ Use the webhook route
 
 // Use separate route for Privacy Page
 app.use("/privacy", privacyRoutes);
 
 // Welcome Page
 app.get("/", (req, res) => {
-    res.send("<h1>Welcome to Instagram Webhook API</h1>");
+  res.send("<h1>Welcome to Instagram Webhook API</h1>");
 });
 
 // Start server
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 // Vercel configuration
