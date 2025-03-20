@@ -22,3 +22,5 @@ router.get("/", (req, res) => {
         <p>If you have any questions about this Privacy Policy, you can contact us at: <strong>your@email.com</strong></p>
     `);
 });
+
+module.exports = router;
