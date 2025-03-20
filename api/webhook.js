@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 
 const router = express.Router();
 const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
-const ACCESS_TOKEN = process.env.INSTAGRAM_ACCESS_TOKEN;
+const ACCESS_TOKEN = process.env.IG_ACCESS_TOKEN;
 
 // ✅ Webhook verification for Instagram
 router.get("/", (req, res) => {
