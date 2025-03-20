@@ -6,7 +6,6 @@ router.get("/", (req, res) => {
         <h1>Privacy Policy</h1>
         <p>Last updated: March 2025</p>
         <p>This Privacy Policy describes how we collect, use, and protect your information.</p>
-
         <h2>Information We Collect</h2>
         <p>We collect basic information such as your messages when you interact with our automated Instagram chatbot.</p>
 
