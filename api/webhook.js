@@ -61,4 +61,9 @@ function sendMessage(senderId, message, fetch) {
     .catch((err) => console.error("Error sending message:", err));
 }
 
+// Dummy function for bot response
+function getBotResponse(userMessage) {
+  return "Thanks for your message! 😊"; // Customize as needed
+}
+
 module.exports = router;
