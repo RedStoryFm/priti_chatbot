@@ -4,6 +4,7 @@ require("dotenv").config();
 // Express server for handling Instagram webhook and auto-replies
 const express = require("express");
 const bodyParser = require("body-parser");
+const privacyRoutes = require("./routes/privacy");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -42,10 +43,8 @@ app.post("/webhook", (req, res) => {
     }
 });
 
-// Privacy Page
-app.get("/privacy", (req, res) => {
-    res.send("<h1>Privacy Policy</h1><p>We respect your privacy...</p>");
-});
+// Use separate route for Privacy Page
+app.use("/privacy", privacyRoutes);
 
 // Welcome Page
 app.get("/", (req, res) => {
