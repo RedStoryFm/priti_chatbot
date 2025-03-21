@@ -38,8 +38,11 @@ router.post("/", async (req, res) => {
           const senderId = messaging.sender.id;
           const receivedMessage = messaging.message.text;
 
-          console.log("💬 Received Message:", receivedMessage);
-
+          console.log(
+            "💬 Received Message:",
+            receivedMessage + "SenderId:",
+            senderId
+          );
           // Auto-reply logic
           const replyMessage = `Thanks for your message! 😊 ${receivedMessage}`;
           await sendMessage(senderId, replyMessage);
@@ -55,7 +58,7 @@ router.post("/", async (req, res) => {
 
 // ✅ Function to send a message via Instagram API
 async function sendMessage(recipientId, messageText) {
-  const url = `https://graph.instagram.com/v22.0/me/messages?access_token=${ACCESS_TOKEN}`;
+  const url = `https://graph.instagram.com/v21.0/me/messages?access_token=${ACCESS_TOKEN}`;
 
   const messageData = {
     recipient: { id: recipientId },
