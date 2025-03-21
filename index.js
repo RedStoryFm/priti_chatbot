@@ -24,10 +24,9 @@ app.use("/api", instagramApi);
 app.use("/privacy", privacyRoutes);
 
 // Welcome Page
-/* app.get("/", (req, res) => {
+app.get("/", (req, res) => {
   res.send("<h1>Welcome to Instagram Webhook API</h1>");
-}); */
-console.log(__dirname);
+});
 
 app.get("/api", (req, res) => {
   res.render("download");
