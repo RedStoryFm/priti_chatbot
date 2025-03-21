@@ -55,7 +55,7 @@ router.post("/", async (req, res) => {
 
 // ✅ Function to send a message via Instagram API
 async function sendMessage(recipientId, messageText) {
-  const url = `https://graph.facebook.com/v12.0/me/messages?access_token=${ACCESS_TOKEN}`;
+  const url = `https://graph.instagram.com/v22.0/me/messages?access_token=${ACCESS_TOKEN}`;
 
   const messageData = {
     recipient: { id: recipientId },
@@ -67,7 +67,7 @@ async function sendMessage(recipientId, messageText) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(messageData),
-      agent: agent, // Allow self-signed certificates
+      /*  agent: agent, */ // Allow self-signed certificates
     });
 
     const data = await response.json();
