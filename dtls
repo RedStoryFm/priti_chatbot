@@ -1,2 +1,15 @@
 Graph exploere token
 EAAJZAYtyeUT8BOzcbHboZAnfUHWO3tdM4cZCZB7JeZAoeZAZCJZBvJmnxmgg5LLx3J7LY6dwb5OQJBIfrPPeDoJ6NaIQclJpUck0p3uUPh6Vd4DmFw9kTly98QjIsuRsw2wxNnEuiUUHfLCDA86T42u14HcRZAvYcgVJOKZAuZC0D0KF2f9TbCD9NNcbX92CfDfeBTnV9nAhk4rQaOachkohX1PdJZAjzD8ZD
+
+
+
+
+
+curl -X POST \
+  'https://graph.instagram.com/v21.0/me/messages' \
+  -H 'Authorization: Bearer IGAAQdn5zjkhBBZAE5GQ1FqS0EyZAmJuY2hYQUpMQUZASaVI2LU4zRkRmZAVhJZAl9xaTVyTHJSTnlSTk1Od0JiNnJ0NVF0a1A0MnlFQlgxYkxWV2V6YzZAqNjFLUFFRT0YyZAENmZAHY0QkxDRWduZAGNCekF5UmtqZAVhfTjliVmdMZAGp6OAZDZD' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "message": "{\"text\":\"Hello World\"}",
+    "recipient": "{\"id\":1954695234939779}"
+  }'

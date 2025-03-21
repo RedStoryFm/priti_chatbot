@@ -58,7 +58,42 @@ router.post("/", async (req, res) => {
 
 // ✅ Function to send a message via Instagram API
 async function sendMessage(recipientId, messageText) {
-  const url = `https://graph.instagram.com/v21.0/me/messages?access_token=${ACCESS_TOKEN}`;
+  const postData = JSON.stringify({
+    recipient: { id: recipientId },
+    message: { text: messageText },
+  });
+
+  const options = {
+    hostname: "graph.facebook.com",
+    path: `/v22.0/me/messages`,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+      "Content-Length": postData.length,
+    },
+  };
+
+  const req = https.request(options, (res) => {
+    let data = "";
+
+    res.on("data", (chunk) => {
+      data += chunk;
+    });
+
+    res.on("end", () => {
+      console.log("📨 Message Sent Successfully:", JSON.parse(data));
+    });
+  });
+
+  req.on("error", (error) => {
+    console.error("❌ Request Error:", error);
+  });
+
+  req.write(postData);
+  req.end();
+
+  /*   const url = `https://graph.instagram.com/v21.0/me/messages?access_token=${ACCESS_TOKEN}`;
 
   const messageData = {
     recipient: { id: recipientId },
@@ -71,7 +106,7 @@ async function sendMessage(recipientId, messageText) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(messageData),
       /*  agent: agent, */ // Allow self-signed certificates
-    });
+  /* });
 
     const data = await response.json();
 
@@ -82,7 +117,7 @@ async function sendMessage(recipientId, messageText) {
     }
   } catch (error) {
     console.error("❌ Error sending message:", error);
-  }
+  } */
 }
 
 module.exports = router;
