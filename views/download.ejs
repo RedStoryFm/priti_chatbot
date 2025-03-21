@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instagram Media Downloader</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f0f0f0;
+      }
+      .container {
+        text-align: center;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      input[type="text"] {
+        width: 300px;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      #error-message {
+        color: red;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Instagram Media Downloader</h1>
+      <input
+        type="text"
+        id="instagramUrl"
+        placeholder="Enter Instagram Post URL"
+      />
+      <br />
+      <button onclick="downloadMedia()">Download</button>
+      <div id="error-message"></div>
+    </div>
+
+    <script>
+      function downloadMedia() {
+        const url = document.getElementById("instagramUrl").value;
+        const errorDiv = document.getElementById("error-message");
+        errorDiv.textContent = ""; // Clear any previous error message
+
+        // Check if the URL is empty
+        if (!url) {
+          errorDiv.textContent = "Please enter an Instagram URL";
+          return;
+        }
+
+        // Make an asynchronous request to the server
+        fetch(`/api/download?url=${encodeURIComponent(url)}`)
+          .then((response) => {
+            if (response.ok) {
+              // Handle successful download
+              const contentDisposition = response.headers.get(
+                "Content-Disposition"
+              );
+              let filename = "media"; // Default filename
+              if (contentDisposition) {
+                const match = contentDisposition.match(/filename="(.+)"/);
+                if (match) {
+                  filename = match[1]; // Extract filename from header
+                }
+              }
+              return response.blob().then((blob) => {
+                // Create a temporary URL for the file and trigger download
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.style.display = "none";
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(downloadUrl);
+              });
+            } else {
+              // Handle error response
+              return response.text().then((text) => {
+                errorDiv.textContent = text; // Display error message (e.g., "Error downloading media")
+              });
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            errorDiv.textContent = "An unexpected error occurred";
+          });
+      }
+    </script>
+  </body>
+</html>
