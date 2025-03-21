@@ -7,11 +7,14 @@ const bodyParser = require("body-parser");
 const privacyRoutes = require("./routes/privacy");
 const webhookRoutes = require("./api/webhook");
 const instagramApi = require("./api/webapi");
-
+const path = require("path");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+//app.set("views", "/var/task/views");
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 // Middleware
 app.use(bodyParser.json());
 
@@ -24,6 +27,7 @@ app.use("/privacy", privacyRoutes);
 /* app.get("/", (req, res) => {
   res.send("<h1>Welcome to Instagram Webhook API</h1>");
 }); */
+console.log(__dirname);
 
 app.get("/api", (req, res) => {
   res.render("download");
